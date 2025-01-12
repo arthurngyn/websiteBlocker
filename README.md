@@ -55,7 +55,7 @@ This Python script allows you to block or unblock websites by modifying the `hos
 
 1. **Run the Script**:
    ```
-   python blocker.py
+   python website_blocker.py
    ```
 
 2. **Block a Website**:
