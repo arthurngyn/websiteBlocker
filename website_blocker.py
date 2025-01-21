@@ -1,16 +1,19 @@
 import os 
 import platform 
 
-# Check if the OS is Windows
-is_windows_os = platform.system() == 'Windows'
+is_windows_os = platform.system()=='Windows'
 
-# Change to adjust for your own path 
-if is_windows_os:
-    hosts_path = "C:\\Windows\\System32\\drivers\\etc\\hosts"
-    export_path = "M:\\Downloads\\BlockedWebsiteExports"
-else:
-    hosts_path = "/etc/hosts"
-    export_path = '/home/ubuntu/Downloads/'
+# Determine system type and use correct paths
+match platform.system():
+    case 'Windows':
+        hosts_path = "C:\\Windows\\System32\\drivers\\etc\\hosts"
+        export_path = "M:\\Downloads\\BlockedWebsiteExports"
+    case 'Linux':
+        hosts_path = "/etc/hosts"
+        export_path = '/home/' + os.environ["USER"] + '/Downloads/'
+    case _: # Generic case
+        print("Your system is not supported")
+        exit()
 
 # Localhost IP
 redirect = "127.0.0.1"
@@ -30,11 +33,11 @@ def write(hosts_path, website_list, flag, redirect, is_windows_os) -> None:
                     print(f'\n\tWebsite "{website}" has been added to the block list.')
 
     # Flush DNS cache
+    # DNS caching is normally not enabled by default on most linux distributions,
+    # as well as by default on `systemd-resolved` and `nscd`. If the behavior is
+    # different on your machine, please update this logic
     if is_windows_os:
         os.system('ipconfig /flushdns')
-    else:
-        os.system('sudo systemctl restart nscd')
-
     print("\nDNS cache flushed!")
 
 
